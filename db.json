@@ -1,0 +1,56 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "json-server",
+      "author": "typicode"
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "body": "some comment",
+      "postId": 1
+    }
+  ],
+  "profile": {
+    "name": "typicode"
+  },
+  "todolists": [
+    {
+      "date": "2021-04-01",
+      "title": "aaa",
+      "description": "aaaaa",
+      "time": "2",
+      "id": 1
+    },
+    {
+      "date": "2021-04-01",
+      "title": "sdsad",
+      "description": "adasdsad",
+      "time": "1",
+      "id": 2
+    },
+    {
+      "date": "2021-04-01",
+      "title": "adadasd",
+      "description": "ddsdsd",
+      "time": "6",
+      "id": 3
+    },
+    {
+      "date": "2021-04-10",
+      "title": "aaa",
+      "description": "ssss",
+      "time": "4",
+      "id": 4
+    },
+    {
+      "date": "2021-04-04",
+      "title": "sdadsa",
+      "description": "sddd",
+      "time": "1",
+      "id": 5
+    }
+  ]
+}
