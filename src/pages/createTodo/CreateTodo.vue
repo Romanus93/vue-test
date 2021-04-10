@@ -55,7 +55,8 @@ import axios from "axios";
 export default defineComponent({
   props: {
     todolistDate: {
-      type: String
+      type: String,
+      required: true
     },
   },
   data() {
@@ -97,6 +98,7 @@ export default defineComponent({
   },
   created() {
     console.log("CreateTodo Page - created");
+    console.log(this.$route);
     console.log(this.todolistDate);
     console.log(typeof this.todolistDate);
   },

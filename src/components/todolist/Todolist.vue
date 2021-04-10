@@ -52,10 +52,11 @@
             <div>Title : {{ item.title }}</div>
             <div>description : {{ item.description }}</div>
             <div>time : {{ item.time }}</div>
+            <div>id: {{ item.id }}</div>
             <!-- eslint-disable-next-line -->
-            <div><button class="button--start"><i class="fas fa-plus"></i></button></div>
+            <div><button class="button--start"><i class="fas fa-running"></i></button></div>
             <!-- eslint-disable-next-line -->
-            <div><button class="button--edit"><i class="fas fa-ellipsis-v"></i></button></div>
+            <div><button class="button--edit" @click="goEditTodoPage(item)"><i class="fas fa-ellipsis-v"></i></button></div>
           </li>
         </ul>
       </section>
@@ -92,22 +93,29 @@ export default defineComponent({
     }
   },
   methods: {
-    goYesterday() {
+    goYesterday(): void {
       console.log("goYesterday");
       // eslint-disable-next-line
       const startOfMonth : string = moment(this.date).startOf('month').format('YYYY-MM-DD');
       // eslint-disable-next-line
       (this.getDay == startOfMonth ) ? this.$emit("goYesterday", -1) : this.$emit("goYesterday", 0);
     },
-    goTomorrow() {
+    goTomorrow(): void {
       // eslint-disable-next-line
       const endOfMonth : string = moment(this.date).endOf("month").format("YYYY-MM-DD");
       // eslint-disable-next-line
       (this.getDay == endOfMonth ) ? this.$emit("goTomorrow", 1) : this.$emit("goTomorrow", 0);
     },
-    goCreateTodoPage() {
+    goCreateTodoPage(): void {
+      console.error(this.todolistDate);
       this.$router.push({ name: "CreateTodo" , params: { todolistDate: this.todolistDate }});
-      // params: { id: this.getDay }
+      console.log('ccc');
+    },
+    goEditTodoPage(item: any): void {
+      console.dir(this.$router);
+      console.log(item);
+      console.log(typeof item);
+      this.$router.push({ name: "EditTodo", params: item });
     },
     async axiosGet() {
       const dataArray: any = [];
@@ -117,7 +125,7 @@ export default defineComponent({
         .then(function (response) {
           // handle success
           console.debug('a');
-          response.data.forEach((element: any) => { 
+          response.data.forEach((element: any) => {
           if (element.date == targetDay) {
             dataArray.push(element);
           }
@@ -133,12 +141,12 @@ export default defineComponent({
       console.debug(this.todolist);
     },
   },
-  created () {
+  created(): void {
     console.log("Todolist componet - created");
     console.log(this.todoList);
     this.axiosGet();
   },
-  beforeUpdate() {
+  beforeUpdate(): void {
     console.log('Todolist componet - beforeUpdate');
   },
 });

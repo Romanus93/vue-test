@@ -12,30 +12,80 @@
     <ul class="todo-flex todo-info">
       <li class="todo-flex todo-title">
         <label for="title">오늘 할 일</label>
-        <input type="text" id="title" name="todo-title" />
+        <input
+          type="text"
+          id="title"
+          name="todo-title"
+          v-model.trim="todolist.title"
+        />
       </li>
       <li class="todo-flex todo-content">
         <label for="description">할 일 내용</label>
-        <textarea id="description" name="todo-content" />
+        <input
+          type="text"
+          id="description"
+          name="todo-content"
+          v-model.trim="todolist.description"
+        />
       </li>
       <li>
-        <div>Time</div>
+        <label for="time">Time</label>
+        <input
+          type="number"
+          id="time"
+          name="todo-time"
+          v-model.number.trim="todolist.time"
+        />
       </li>
     </ul>
     <ul class="todo-flex buttons-wrapper">
       <li>
-        <Button class="button--edit">
+        <button class="button--edit">
           <i class="far fa-edit"></i>
-        </Button>
+        </button>
       </li>
       <li>
-        <Button class="button--cancle">
+        <button class="button--cancle">
           <i class="fas fa-minus"></i>
-        </Button>
+        </button>
       </li>
     </ul>
   </main>
 </template>
+
+<script lang="ts">
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: "EditTodo",
+  props: {
+    todolistData: {
+      type: Object
+    }
+  },
+  data() {
+    return {
+      todoList: {
+        title: "v",
+        time: 1,
+        description: "v"
+      }
+    }
+  },
+  computed: {
+    todolist(): any {
+      return this.todolistData 
+    }
+  },
+  created() {
+    console.log(`edit Todo created`);
+    console.log(this.$route.params);
+    console.log(this.todolist);
+    // console.log(this.todolistDate, this.todolistId);
+  },
+})
+</script>
+
 
 <style scoped>
 @import "./edit-todo.css";
