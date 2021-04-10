@@ -30,10 +30,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/calendar/editTodo",
     name: "EditTodo",
-    // props: true
-    props: (route) => ({ todolistData: route.params })
-    // console.log(route.params)
-    ,
+    props: (route) => ({ todolistData: route.params }),
     component: EditTodo
   }
 ];

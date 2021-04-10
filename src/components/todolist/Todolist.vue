@@ -107,14 +107,9 @@ export default defineComponent({
       (this.getDay == endOfMonth ) ? this.$emit("goTomorrow", 1) : this.$emit("goTomorrow", 0);
     },
     goCreateTodoPage(): void {
-      console.error(this.todolistDate);
       this.$router.push({ name: "CreateTodo" , params: { todolistDate: this.todolistDate }});
-      console.log('ccc');
     },
     goEditTodoPage(item: any): void {
-      console.dir(this.$router);
-      console.log(item);
-      console.log(typeof item);
       this.$router.push({ name: "EditTodo", params: item });
     },
     async axiosGet() {
@@ -142,13 +137,8 @@ export default defineComponent({
     },
   },
   created(): void {
-    console.log("Todolist componet - created");
-    console.log(this.todoList);
     this.axiosGet();
-  },
-  beforeUpdate(): void {
-    console.log('Todolist componet - beforeUpdate');
-  },
+  }
 });
 </script>
 

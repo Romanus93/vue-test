@@ -60,32 +60,22 @@ export default defineComponent({
   name: "EditTodo",
   props: {
     todolistData: {
-      type: Object
+      type: Object,
+      required: true
     }
   },
   data() {
     return {
-      todoList: {
-        title: "v",
-        time: 1,
-        description: "v"
+      todolist: {
+        title: this.todolistData.title,
+        time: this.todolistData.time,
+        description: this.todolistData.description,
+        id: this.todolistData.id
       }
     }
-  },
-  computed: {
-    todolist(): any {
-      return this.todolistData 
-    }
-  },
-  created() {
-    console.log(`edit Todo created`);
-    console.log(this.$route.params);
-    console.log(this.todolist);
-    // console.log(this.todolistDate, this.todolistId);
-  },
+  }
 })
 </script>
-
 
 <style scoped>
 @import "./edit-todo.css";

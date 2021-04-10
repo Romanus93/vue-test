@@ -39,11 +39,6 @@ export default defineComponent({
       //'slide-h', 'slide-v', 'fade', 'none' 중 선택 가능. default slide-h
     };
   },
-  beforeUpdate(): void {
-    console.info(`this.udapted`);
-    console.log(this.getDay);
-    console.log(typeof this.getDay);
-  },
   computed: {
     getDay(): string {
       if (this.date != null) {
@@ -59,7 +54,6 @@ export default defineComponent({
     },
     calendar(): any {
       const calendars = this.$refs.calendar;
-      console.log(calendars);
       return calendars;
     }
   },
@@ -81,11 +75,6 @@ export default defineComponent({
         position: this.position
       });
     }
-  },
-  created () {
-    console.log("calendarPage this is creadted");
-    console.log(this.date);
-    console.log(typeof this.date);
-  },
+  }
 });
 </script>
