@@ -48,10 +48,10 @@
       <section>
         <!-- v-for 반복문 -->
         <ul>
-          <li class="todo_item" v-for="(item, index) in todoList" :key="index">
-            <div>Title {{ item.title }}</div>
-            <div>description {{ item.descpription }}</div>
-            <div>time {{ item.idx }}</div>
+          <li class="todo_item" v-for="(item, index) in todolist" :key="index">
+            <div>Title : {{ item.title }}</div>
+            <div>description : {{ item.description }}</div>
+            <div>time : {{ item.time }}</div>
             <!-- eslint-disable-next-line -->
             <div><button class="button--start"><i class="fas fa-plus"></i></button></div>
             <!-- eslint-disable-next-line -->
@@ -68,15 +68,9 @@ import { defineComponent } from "vue";
 import axios from "axios";
 import moment from "moment";
 
-interface Todolist {
-  id: number;
-  title: string;
-  description: string;
-  time: number;
-}
-
 export default defineComponent({
   props: {
+    //todoList ?
     todoList: {
       type: Array,
       default: () => {
@@ -85,6 +79,11 @@ export default defineComponent({
     },
     date: Object,
     getDay: String
+  },
+  data() {
+    return {
+      todolist: []
+    }
   },
   emits: ["goYesterday", "goTomorrow"],
   computed: {
@@ -130,10 +129,13 @@ export default defineComponent({
         });
       console.debug('b');
       console.debug( dataArray);
+      this.todolist = dataArray
+      console.debug(this.todolist);
     },
   },
   created () {
     console.log("Todolist componet - created");
+    console.log(this.todoList);
     this.axiosGet();
   },
   beforeUpdate() {
