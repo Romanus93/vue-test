@@ -71,13 +71,6 @@ import moment from "moment";
 
 export default defineComponent({
   props: {
-    //todoList ?
-    todoList: {
-      type: Array,
-      default: () => {
-        return [];
-      }
-    },
     date: Object,
     getDay: String
   },
@@ -114,24 +107,24 @@ export default defineComponent({
     },
     async axiosGet() {
       const dataArray: any = [];
-      const targetDay: string = this.todolistDate
       await axios
         .get("http://localhost:3000/todolists")
-        .then(function (response) {
+        .then((response) => {
           // handle success
-          console.debug('a');
           response.data.forEach((element: any) => {
-          if (element.date == targetDay) {
+            console.debug('a');
+            if (element.date == this.todolistDate) {
             dataArray.push(element);
+            // this.todolist.push(element);
           }
-        });
+          });
         })
         .catch(function (error) {
           // handle error
           console.debug(error);
         });
       console.debug('b');
-      console.debug( dataArray);
+      // console.debug( dataArray);
       this.todolist = dataArray
       console.debug(this.todolist);
     },

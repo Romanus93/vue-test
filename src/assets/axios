@@ -1,0 +1,22 @@
+await axios
+        .get("http://localhost:3000/todolists")
+        .then((response) => {
+          response.data.forEach((element: any) => {
+          if (element.date == targetDay) {
+            dataArray.push(element);
+          }
+        }
+          
+          function (response) {
+          // handle success
+          console.debug('a');
+          response.data.forEach((element: any) => {
+          if (element.date == targetDay) {
+            dataArray.push(element);
+          }
+        });
+        })
+        .catch(function (error) {
+          // handle error
+          console.debug(error);
+        });

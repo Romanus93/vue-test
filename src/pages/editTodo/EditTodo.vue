@@ -40,7 +40,7 @@
     </ul>
     <ul class="todo-flex buttons-wrapper">
       <li>
-        <button class="button--edit">
+        <button class="button--edit" @click="axiosPatch">
           <i class="far fa-edit"></i>
         </button>
       </li>
@@ -54,7 +54,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent } from "vue"
+import axios from "axios"
 
 export default defineComponent({
   name: "EditTodo",
@@ -68,10 +69,32 @@ export default defineComponent({
     return {
       todolist: {
         title: this.todolistData.title,
-        time: this.todolistData.time,
         description: this.todolistData.description,
+        time: this.todolistData.time,
         id: this.todolistData.id
       }
+    }
+  },
+  methods: {
+    async axiosPatch() {
+      console.debug('axiosPatch')
+      await axios.patch(`http://localhost:3000/todolists/${this.todolist.id}`, {
+        title: this.todolist.title,
+        description: this.todolist.description,
+        time: this.todolist.time,
+        id: this.todolist.id
+      }).
+      then(response => {
+        // console.debug(response, 'a-succes');
+        console.debug(response);
+        console.debug('a-succes');
+        }).
+      catch(error => {
+        // console.debug(error, 'a-error')
+        console.debug(error)
+        console.debug('a-error')
+        })
+      console.debug('b');
     }
   }
 })

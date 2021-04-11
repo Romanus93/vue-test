@@ -29,7 +29,7 @@
           type="number"
           id="time"
           name="todo-time"
-          v-model.number.trim="todolist.time"
+          v-model.number="todolist.time"
         />
       </li>
     </ul>
@@ -71,13 +71,11 @@ export default defineComponent({
   },
   methods: {
     createTodo() {
-      console.debug("aaa");
-      if( this.todolist.time > 0 && this.todolist.title != "" && this.todolist.description != "" ) {
+      if( (this.todolist.time > 0) && (this.todolist.title != "") && (this.todolist.description != "") ) {
         this.axiosPost();
         this.$router.push({ name: "Calendar" });
       } else {
-        console.error("값을 확인해주세요");
-        // alert("시간을 정해주세요!")
+        alert("값을 확인해주세요!")
       }
     },
     axiosPost() {
@@ -95,15 +93,6 @@ export default defineComponent({
           console.log(error);
         });
     }
-  },
-  created() {
-    console.log("CreateTodo Page - created");
-    console.log(this.$route);
-    console.log(this.todolistDate);
-    console.log(typeof this.todolistDate);
-  },
-  beforeUpdate() {
-    console.log("this is beforeUpdate");
   }
 });
 </script>
