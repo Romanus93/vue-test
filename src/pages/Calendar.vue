@@ -5,13 +5,17 @@
       :value="null"
       color="green"
       :transition="transition"
+      is-expanded
       ref="calendar"
     />
-    <h1>달력</h1>
-    <h2>{{ date }}</h2>
-    <h2>{{ getDay }}</h2>
+    <div class="calendarModal" v-if="!getDay">
+      <p>날짜를 선택해주세요!</p>
+      <button>확인</button>
+    </div>
+    <!-- <div style="border: 1px solid blue; height: 300px" v-if="!getDay">
+      
+    </div> -->
     <Todolist
-      :todoList="todoList"
       :date="date"
       :getDay="getDay"
       @goYesterday="goYesterday"
@@ -24,44 +28,41 @@
 import { defineComponent } from "vue";
 import moment from "moment";
 import Todolist from "../components/todolist/Todolist.vue";
-import todoListData from "../assets/todoListData";
-
-const todoListItems: { [index: string]: any } = todoListData;
 
 export default defineComponent({
   components: { Todolist },
   data() {
     return {
       date: new Date(),
-      todoArr: todoListItems,
       position: 1,
-      transition: "slide-h"
+      transition: "slide-h",
+      calendarView: false
       //'slide-h', 'slide-v', 'fade', 'none' 중 선택 가능. default slide-h
     };
   },
-  beforeUpdate(): void {
-    console.info(`this.udapted`);
-    console.log(this.getDay);
-    console.log(typeof this.getDay);
-  },
   computed: {
-    getDay(): string {
+    getDay(): string | undefined | null {
       if (this.date != null) {
         const today = moment(this.date).format("YYYY-MM-DD");
         return today;
       } else {
-        return "please, choose the date";
+        console.log('Calednar-Page Computed-Getday',this.date);
+        this.testFunc();
+        return null;
       }
-    },
-    todoList(): object {
-      const day = moment(this.date).format("YYYY-MM-DD");
-      return this.todoArr[day];
     },
     calendar(): any {
       const calendars = this.$refs.calendar;
-      console.log(calendars);
       return calendars;
     }
+  },
+  created () {
+    console.log('Calendar-Page created');
+    console.log(this.getDay);
+  },
+  beforeUpdate () {
+    console.log('Calendar-Page before update');
+    console.log('Calendar-Page before update', this.getDay);
   },
   methods: {
     goYesterday(step: number): void {
@@ -80,12 +81,14 @@ export default defineComponent({
         transition: this.transition,
         position: this.position
       });
+    },
+    testFunc() {
+      console.log('Calendar-Page test Func', this.getDay);
     }
-  },
-  created () {
-    console.log("calendarPage this is creadted");
-    console.log(this.date);
-    console.log(typeof this.date);
-  },
+  }
 });
 </script>
+
+<style scoped>
+
+</style>

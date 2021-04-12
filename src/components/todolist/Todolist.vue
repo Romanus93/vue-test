@@ -36,11 +36,11 @@
             <i class="fas fa-plus"></i>
           </button>
         </li>
-        <!-- <li>
+        <li>
           <button class="button--delete">
-            <i class="fas fa-minus"></i>
+            <i class="fas fa-minus" ></i>
           </button>
-        </li> -->
+        </li>
       </ul>
     </header>
     <!-- 일정 목록 -->
@@ -48,16 +48,20 @@
       <section>
         <!-- v-for 반복문 -->
         <ul>
-          <li class="todo_item" v-for="(item, index) in todoList" :key="index">
-            <div>Title {{ item.title }}</div>
-            <div>description {{ item.descpription }}</div>
-            <div>time {{ item.idx }}</div>
+          <li class="todo_item" v-for="(item, index) in todolist" :key="index">
+            <div>Title : {{ item.title }}</div>
+            <div>description : {{ item.description }}</div>
+            <div>time : {{ item.time }}</div>
+            <div>id: {{ item.id }}</div>
             <!-- eslint-disable-next-line -->
-            <div><button class="button--start"><i class="fas fa-plus"></i></button></div>
+            <div><button class="button--start"><i class="fas fa-running"></i></button></div>
             <!-- eslint-disable-next-line -->
-            <div><button class="button--edit"><i class="fas fa-ellipsis-v"></i></button></div>
+            <div><button class="button--edit" @click="goEditTodoPage(item)"><i class="fas fa-ellipsis-v"></i></button></div>
           </li>
         </ul>
+        <div v-if="testIf">
+          {{ text }}
+        </div>
       </section>
     </main>
   </div>
@@ -69,79 +73,124 @@ import axios from "axios";
 import moment from "moment";
 
 interface Todolist {
-  id: number;
+  date: string;
   title: string;
   description: string;
   time: number;
+  id: number;
 }
 
 export default defineComponent({
   props: {
-    todoList: {
-      type: Array,
-      default: () => {
-        return [];
-      }
+    date: {
+      type: Object,
+      required: true
     },
-    date: Object,
-    getDay: String
+    getDay: {
+      type: String,
+      required: true
+    }
+  },
+  data() {
+    return {
+      todolist: [] as object[],
+      text: "",
+      testIf: false
+    }
   },
   emits: ["goYesterday", "goTomorrow"],
   computed: {
-    todolistDate(): any {
+    todolistDate(): string {
       return this.getDay;
+    },
+    // todolistArrayStatus(): boolean {
+    //   if(this.todolist.length === 0){
+    //     this.inputText("오늘은 할 일이 없네요!");
+    //     return true
+    //   } else { 
+    //     return false
+    //   }
+    // }
+  },
+  watch: {
+    getDay(newValue, oldValue) {
+      if(oldValue !== newValue){
+        console.log('watch 실행중 - 날짜가 다를 떄.');
+        this.axiosGet();
+      } else if (oldValue == newValue) {
+        console.log('watch 실행중 - 날짜는 그대로');
+      }
     }
   },
+  created(): void {
+    console.log('Todolist Component - created');
+    console.log('Todolist Component - created', this.getDay);
+    this.axiosGet();
+    console.log('Todolsit Component - created', this.todolist);
+  },
+  beforeUpdate () {
+    console.log('Todolsit Component - beforeUpdate');
+    console.log('Todolsit Component - beforeUpdate', this.date);
+    console.log('Todolsit Component - beforeUpdate', this.getDay);
+    console.log(`'Todolsit Component - beforeUpdate'-${this.todolist}`, this.todolist);
+    console.log(`'Todolsit Component - beforeUpdate'-${this.todolist}`, this.todolist);
+  },
   methods: {
-    goYesterday() {
+    goYesterday(): void {
       console.log("goYesterday");
       // eslint-disable-next-line
       const startOfMonth : string = moment(this.date).startOf('month').format('YYYY-MM-DD');
       // eslint-disable-next-line
-      (this.getDay == startOfMonth ) ? this.$emit("goYesterday", -1) : this.$emit("goYesterday", 0);
+      (this.todolistDate == startOfMonth ) ? this.$emit("goYesterday", -1) : this.$emit("goYesterday", 0);
     },
-    goTomorrow() {
+    goTomorrow(): void {
       // eslint-disable-next-line
       const endOfMonth : string = moment(this.date).endOf("month").format("YYYY-MM-DD");
       // eslint-disable-next-line
-      (this.getDay == endOfMonth ) ? this.$emit("goTomorrow", 1) : this.$emit("goTomorrow", 0);
+      (this.todolistDate == endOfMonth ) ? this.$emit("goTomorrow", 1) : this.$emit("goTomorrow", 0);
     },
-    goCreateTodoPage() {
+    goCreateTodoPage(): void {
       this.$router.push({ name: "CreateTodo" , params: { todolistDate: this.todolistDate }});
-      // params: { id: this.getDay }
+    },
+    goEditTodoPage(item: any): void {
+      this.$router.push({ name: "EditTodo", params: item });
     },
     async axiosGet() {
       const dataArray: any = [];
-      const targetDay: string = this.todolistDate
       await axios
         .get("http://localhost:3000/todolists")
-        .then(function (response) {
+        .then((response) => {
           // handle success
-          console.debug('a');
-          response.data.forEach((element: any) => { 
-          if (element.date == targetDay) {
-            dataArray.push(element);
+          response.data.forEach((element: Todolist): void => {
+            console.debug('a');
+            if (element.date == this.todolistDate) {
+            // dataArray.push(element);
+            this.todolist.push(element);
           }
-        });
+          });
         })
-        .catch(function (error) {
+        .catch((error): void => {
           // handle error
           console.debug(error);
         });
       console.debug('b');
-      console.debug( dataArray);
+      // console.debug( dataArray);
+      this.todolist = dataArray
+      this.inputText();
+      console.debug(this.todolist);
     },
-  },
-  created () {
-    console.log("Todolist componet - created");
-    this.axiosGet();
-  },
-  beforeUpdate() {
-    console.log('Todolist componet - beforeUpdate');
-  },
+    inputText() : void {
+      if(this.todolist.length == 0){
+        this.testIf = true;
+        this.text = "일이 없네연 ^^"
+      } else {
+        this.testIf = false
+      }
+    }
+  }
 });
 </script>
 
 <style scoped>
-@import "./todolist.css";
+  @import "./todolist.css";
 </style>

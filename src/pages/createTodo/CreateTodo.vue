@@ -29,7 +29,7 @@
           type="number"
           id="time"
           name="todo-time"
-          v-model.number.trim="todolist.time"
+          v-model.number="todolist.time"
         />
       </li>
     </ul>
@@ -55,7 +55,8 @@ import axios from "axios";
 export default defineComponent({
   props: {
     todolistDate: {
-      type: String
+      type: String,
+      required: true
     },
   },
   data() {
@@ -70,38 +71,28 @@ export default defineComponent({
   },
   methods: {
     createTodo() {
-      console.debug("aaa");
-      if( this.todolist.time > 0 && this.todolist.title != "" && this.todolist.description != "" ) {
+      if( (this.todolist.time > 0) && (this.todolist.title != "") && (this.todolist.description != "") ) {
         this.axiosPost();
         this.$router.push({ name: "Calendar" });
       } else {
-        console.error("값을 확인해주세요");
-        // alert("시간을 정해주세요!")
+        alert("값을 확인해주세요!")
       }
     },
-    axiosPost() {
-      axios
+    async axiosPost() {
+      await axios
         .post("http://localhost:3000/todolists", {
           date: this.todolist.date,
           title: this.todolist.title,
           description: this.todolist.description,
           time: this.todolist.time
         })
-        .then(function (response) {
-          console.log(response.data);
+        .then((response) => {
+          console.debug(response.data);
         })
-        .catch(function (error) {
-          console.log(error);
+        .catch((error) => {
+          console.debug(error)
         });
     }
-  },
-  created() {
-    console.log("CreateTodo Page - created");
-    console.log(this.todolistDate);
-    console.log(typeof this.todolistDate);
-  },
-  beforeUpdate() {
-    console.log("this is beforeUpdate");
   }
 });
 </script>

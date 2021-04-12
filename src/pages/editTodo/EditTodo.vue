@@ -3,39 +3,110 @@
     <div class="advice">
       <!-- 명언 랜덤으로 뿌리기 -->
       <p>
-        시간관리의 핵심은 이미 적힌 일과중에 무엇부터 할까를 정하는 것이
-        아니라,<br />
-        우선순위의 일부터 일정에 넣는 것이다.<br />-스티븐 커비, 성공하는
-        사람들의 7가지 습관 저자-
+        미래의 '8년'에 신경쓰지 말고,<br />
+        코앞의 '8일'에 집중하는 삶을 살라.<br />
+        -개리 베이너척-
       </p>
     </div>
     <ul class="todo-flex todo-info">
       <li class="todo-flex todo-title">
         <label for="title">오늘 할 일</label>
-        <input type="text" id="title" name="todo-title" />
+        <input
+          type="text"
+          id="title"
+          name="todo-title"
+          v-model.trim="todolist.title"
+        />
       </li>
       <li class="todo-flex todo-content">
         <label for="description">할 일 내용</label>
-        <textarea id="description" name="todo-content" />
+        <input
+          type="text"
+          id="description"
+          name="todo-content"
+          v-model.trim="todolist.description"
+        />
       </li>
       <li>
-        <div>Time</div>
+        <label for="time">Time</label>
+        <input
+          type="number"
+          id="time"
+          name="todo-time"
+          v-model.number.trim="todolist.time"
+        />
       </li>
     </ul>
     <ul class="todo-flex buttons-wrapper">
       <li>
-        <Button class="button--edit">
+        <button class="button--edit" @click="editTodo()">
           <i class="far fa-edit"></i>
-        </Button>
+        </button>
       </li>
       <li>
-        <Button class="button--cancle">
-          <i class="fas fa-minus"></i>
-        </Button>
+        <button class="button--cancle">
+          <i class="fas fa-undo"></i>
+        </button>
       </li>
     </ul>
   </main>
 </template>
+
+<script lang="ts">
+import { defineComponent } from "vue"
+import axios from "axios"
+
+export default defineComponent({
+  name: "EditTodo",
+  props: {
+    todolistData: {
+      type: Object,
+      required: true
+    }
+  },
+  data() {
+    return {
+      todolist: {
+        title: this.todolistData.title,
+        description: this.todolistData.description,
+        time: this.todolistData.time,
+        id: this.todolistData.id
+      },
+      forVerificationTodolist: this.todolistData
+    }
+  },
+  methods: {
+    editTodo() {
+      if( (this.todolist.title === this.forVerificationTodolist.title) && (this.todolist.description === this.forVerificationTodolist.description) && (this.todolist.time  === this.forVerificationTodolist.time) ){
+        console.debug('그대로임');
+        this.goCalendarPage();
+      } else {
+        console.debug('바뀌었음.');
+        this.axiosPatch()
+      }
+    },
+    async axiosPatch() {
+      await axios.patch(`http://localhost:3000/todolists/${this.todolist.id}`, {
+        title: this.todolist.title,
+        description: this.todolist.description,
+        time: this.todolist.time,
+        id: this.todolist.id
+      }).
+      then(response => {
+        console.debug(response);
+        }).
+      catch(error => {
+        console.debug(error)
+        })
+      console.debug('b');
+    },
+    goCalendarPage() {
+      this.$router.push({ name: "Calendar"})
+    }
+  },
+  
+})
+</script>
 
 <style scoped>
 @import "./edit-todo.css";
