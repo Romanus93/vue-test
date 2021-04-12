@@ -59,6 +59,9 @@
             <div><button class="button--edit" @click="goEditTodoPage(item)"><i class="fas fa-ellipsis-v"></i></button></div>
           </li>
         </ul>
+        <div v-if="testIf">
+          {{ text }}
+        </div>
       </section>
     </main>
   </div>
@@ -69,9 +72,20 @@ import { defineComponent } from "vue";
 import axios from "axios";
 import moment from "moment";
 
+interface Todolist {
+  date: string;
+  title: string;
+  description: string;
+  time: number;
+  id: number;
+}
+
 export default defineComponent({
   props: {
-    date: Object,
+    date: {
+      type: Object,
+      required: true
+    },
     getDay: {
       type: String,
       required: true
@@ -79,25 +93,47 @@ export default defineComponent({
   },
   data() {
     return {
-      todolist: []
+      todolist: [] as object[],
+      text: "",
+      testIf: false
     }
   },
   emits: ["goYesterday", "goTomorrow"],
   computed: {
-    todolistDate(): any {
+    todolistDate(): string {
       return this.getDay;
+    },
+    // todolistArrayStatus(): boolean {
+    //   if(this.todolist.length === 0){
+    //     this.inputText("오늘은 할 일이 없네요!");
+    //     return true
+    //   } else { 
+    //     return false
+    //   }
+    // }
+  },
+  watch: {
+    getDay(newValue, oldValue) {
+      if(oldValue !== newValue){
+        console.log('watch 실행중 - 날짜가 다를 떄.');
+        this.axiosGet();
+      } else if (oldValue == newValue) {
+        console.log('watch 실행중 - 날짜는 그대로');
+      }
     }
   },
   created(): void {
-    console.log('Todolist Component');
-    console.log(this.getDay);
+    console.log('Todolist Component - created');
+    console.log('Todolist Component - created', this.getDay);
     this.axiosGet();
+    console.log('Todolsit Component - created', this.todolist);
   },
   beforeUpdate () {
     console.log('Todolsit Component - beforeUpdate');
-    console.log(this.date);
-    console.log(this.getDay);
-    console.log('a');
+    console.log('Todolsit Component - beforeUpdate', this.date);
+    console.log('Todolsit Component - beforeUpdate', this.getDay);
+    console.log(`'Todolsit Component - beforeUpdate'-${this.todolist}`, this.todolist);
+    console.log(`'Todolsit Component - beforeUpdate'-${this.todolist}`, this.todolist);
   },
   methods: {
     goYesterday(): void {
@@ -125,23 +161,32 @@ export default defineComponent({
         .get("http://localhost:3000/todolists")
         .then((response) => {
           // handle success
-          response.data.forEach((element: any) => {
+          response.data.forEach((element: Todolist): void => {
             console.debug('a');
             if (element.date == this.todolistDate) {
-            dataArray.push(element);
-            // this.todolist.push(element);
+            // dataArray.push(element);
+            this.todolist.push(element);
           }
           });
         })
-        .catch(function (error) {
+        .catch((error): void => {
           // handle error
           console.debug(error);
         });
       console.debug('b');
       // console.debug( dataArray);
       this.todolist = dataArray
+      this.inputText();
       console.debug(this.todolist);
     },
+    inputText() : void {
+      if(this.todolist.length == 0){
+        this.testIf = true;
+        this.text = "일이 없네연 ^^"
+      } else {
+        this.testIf = false
+      }
+    }
   }
 });
 </script>

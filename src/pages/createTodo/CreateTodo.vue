@@ -78,22 +78,20 @@ export default defineComponent({
         alert("값을 확인해주세요!")
       }
     },
-    axiosPost() {
-      axios
+    async axiosPost() {
+      await axios
         .post("http://localhost:3000/todolists", {
           date: this.todolist.date,
           title: this.todolist.title,
           description: this.todolist.description,
           time: this.todolist.time
         })
-        .then(function (response) {
-          console.debug('a')
-          console.log(response.data);
+        .then((response) => {
+          console.debug(response.data);
         })
-        .catch(function (error) {
-          console.log(error);
+        .catch((error) => {
+          console.debug(error)
         });
-        console.debug('b')
     }
   }
 });

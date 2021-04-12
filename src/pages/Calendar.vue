@@ -12,11 +12,10 @@
       <p>날짜를 선택해주세요!</p>
       <button>확인</button>
     </div>
-    <div style="border: 1px solid blue; height: 300px" v-if="!getDay">
+    <!-- <div style="border: 1px solid blue; height: 300px" v-if="!getDay">
       
-    </div>
+    </div> -->
     <Todolist
-      v-if="getDay"
       :date="date"
       :getDay="getDay"
       @goYesterday="goYesterday"
@@ -29,7 +28,6 @@
 import { defineComponent } from "vue";
 import moment from "moment";
 import Todolist from "../components/todolist/Todolist.vue";
-// import { Calendar } from 'node_modules/v-calendar/types';
 
 export default defineComponent({
   components: { Todolist },
@@ -43,14 +41,14 @@ export default defineComponent({
     };
   },
   computed: {
-    getDay(): string | undefined {
+    getDay(): string | undefined | null {
       if (this.date != null) {
         const today = moment(this.date).format("YYYY-MM-DD");
         return today;
       } else {
-        console.log('computed getday CalednarPage',this.date);
+        console.log('Calednar-Page Computed-Getday',this.date);
         this.testFunc();
-        return this.date;
+        return null;
       }
     },
     calendar(): any {
@@ -59,12 +57,12 @@ export default defineComponent({
     }
   },
   created () {
-    console.log('this calendar page created');
+    console.log('Calendar-Page created');
     console.log(this.getDay);
   },
   beforeUpdate () {
-    console.log('this calendar page before update');
-    console.log('this calendar page before update', this.getDay);
+    console.log('Calendar-Page before update');
+    console.log('Calendar-Page before update', this.getDay);
   },
   methods: {
     goYesterday(step: number): void {
@@ -85,8 +83,7 @@ export default defineComponent({
       });
     },
     testFunc() {
-      console.log('test Func');
-      console.log('test Func', this.date);
+      console.log('Calendar-Page test Func', this.getDay);
     }
   }
 });
