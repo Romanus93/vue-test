@@ -29,16 +29,11 @@
           </button>
         </li>
       </ul>
-      <!-- 일정 생성 삭제 버튼 -->
+      <!-- 일정 생성 삭제 버튼 html 바까야함.div로 -->
       <ul class="todo-flex buttons-wrapper">
         <li>
           <button class="button--create" @click="goCreateTodoPage">
             <i class="fas fa-plus"></i>
-          </button>
-        </li>
-        <li>
-          <button class="button--delete">
-            <i class="fas fa-minus" ></i>
           </button>
         </li>
       </ul>
@@ -91,6 +86,7 @@ export default defineComponent({
       required: true
     }
   },
+  emits: ["goYesterday", "goTomorrow"],
   data() {
     return {
       todolist: [] as object[],
@@ -98,44 +94,48 @@ export default defineComponent({
       testIf: false
     }
   },
-  emits: ["goYesterday", "goTomorrow"],
   computed: {
     todolistDate(): string {
       return this.getDay;
-    },
-    // todolistArrayStatus(): boolean {
-    //   if(this.todolist.length === 0){
-    //     this.inputText("오늘은 할 일이 없네요!");
-    //     return true
-    //   } else { 
-    //     return false
-    //   }
-    // }
+    }
   },
   watch: {
+    // else 써야하나 아니면 if문 속에 if문을 넣어야 할려나
     getDay(newValue, oldValue) {
-      if(oldValue !== newValue){
-        console.log('watch 실행중 - 날짜가 다를 떄.');
+      if(newValue == null) {
+        this.todolist.length = 0;
+        this.inputText();
+      } else if ((newValue !== null)&&(oldValue !== newValue)) {
+        console.debug('else if');
         this.axiosGet();
-      } else if (oldValue == newValue) {
-        console.log('watch 실행중 - 날짜는 그대로');
+      } else {
+        console.debug('else');
       }
     }
   },
   created(): void {
-    console.log('Todolist Component - created');
-    console.log('Todolist Component - created', this.getDay);
     this.axiosGet();
-    console.log('Todolsit Component - created', this.todolist);
-  },
-  beforeUpdate () {
-    console.log('Todolsit Component - beforeUpdate');
-    console.log('Todolsit Component - beforeUpdate', this.date);
-    console.log('Todolsit Component - beforeUpdate', this.getDay);
-    console.log(`'Todolsit Component - beforeUpdate'-${this.todolist}`, this.todolist);
-    console.log(`'Todolsit Component - beforeUpdate'-${this.todolist}`, this.todolist);
   },
   methods: {
+    async axiosGet(): Promise<void> {
+      this.todolist.length = 0;
+      await axios
+        .get("http://localhost:3000/todolists")
+        .then((response) => {
+          // handle success
+          console.debug('a');
+          response.data.forEach((element: Todolist): void => {
+            (element.date == this.todolistDate)&& this.todolist.push(element)
+          });
+          console.debug('axiosGet-',this.todolist.length)
+        })
+        .catch((error): void => {
+          // handle error
+          console.debug(error);
+        });
+      this.inputText();
+      console.debug('b');
+    },
     goYesterday(): void {
       console.log("goYesterday");
       // eslint-disable-next-line
@@ -155,36 +155,15 @@ export default defineComponent({
     goEditTodoPage(item: any): void {
       this.$router.push({ name: "EditTodo", params: item });
     },
-    async axiosGet() {
-      const dataArray: any = [];
-      await axios
-        .get("http://localhost:3000/todolists")
-        .then((response) => {
-          // handle success
-          response.data.forEach((element: Todolist): void => {
-            console.debug('a');
-            if (element.date == this.todolistDate) {
-            // dataArray.push(element);
-            this.todolist.push(element);
-          }
-          });
-        })
-        .catch((error): void => {
-          // handle error
-          console.debug(error);
-        });
-      console.debug('b');
-      // console.debug( dataArray);
-      this.todolist = dataArray
-      this.inputText();
-      console.debug(this.todolist);
+    goCalendarPage(): void {
+      this.$router.push({ name: "Calendar" });
     },
-    inputText() : void {
-      if(this.todolist.length == 0){
+    inputText(): void {
+      if (this.todolist.length == 0) {
         this.testIf = true;
-        this.text = "일이 없네연 ^^"
+        this.text = "일이 없네연 ^^";
       } else {
-        this.testIf = false
+        this.testIf = false;
       }
     }
   }
@@ -192,5 +171,5 @@ export default defineComponent({
 </script>
 
 <style scoped>
-  @import "./todolist.css";
+@import "./todolist.css";
 </style>

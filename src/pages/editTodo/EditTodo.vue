@@ -33,19 +33,19 @@
           type="number"
           id="time"
           name="todo-time"
-          v-model.number.trim="todolist.time"
+          v-model.number="todolist.time"
         />
       </li>
     </ul>
     <ul class="todo-flex buttons-wrapper">
       <li>
-        <button class="button--edit" @click="editTodo()">
+        <button class="button--edit" @click="editTodo">
           <i class="far fa-edit"></i>
         </button>
       </li>
       <li>
-        <button class="button--cancle">
-          <i class="fas fa-undo"></i>
+        <button class="button--home" @click="goCalendarPage">
+          <i class="fas fa-home"></i>
         </button>
       </li>
     </ul>
@@ -53,8 +53,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue"
-import axios from "axios"
+import { defineComponent } from "vue";
+import axios from "axios";
+
+interface Todolist {
+  date: string;
+  title: string;
+  description: string;
+  time: number;
+  id: number;
+}
 
 export default defineComponent({
   name: "EditTodo",
@@ -76,36 +84,38 @@ export default defineComponent({
     }
   },
   methods: {
+    async axiosPatch(): Promise<void> {
+      await axios
+        .patch(`http://localhost:3000/todolists/${this.todolist.id}`, {
+          title: this.todolist.title,
+          description: this.todolist.description,
+          time: this.todolist.time,
+          id: this.todolist.id
+        })
+        .then(response => {
+          console.debug(response);
+        })
+        .catch(error => {
+          console.debug(error);
+        });
+      console.debug("b");
+    },
+    goCalendarPage(): void {
+      this.$router.push({ name: "Calendar" });
+    },
     editTodo() {
-      if( (this.todolist.title === this.forVerificationTodolist.title) && (this.todolist.description === this.forVerificationTodolist.description) && (this.todolist.time  === this.forVerificationTodolist.time) ){
-        console.debug('그대로임');
+      if (
+        (this.todolist.title === this.forVerificationTodolist.title) &&
+        (this.todolist.description === this.forVerificationTodolist.description) &&
+        (this.todolist.time  === this.forVerificationTodolist.time)
+      ) {
         this.goCalendarPage();
       } else {
-        console.debug('바뀌었음.');
-        this.axiosPatch()
+        this.axiosPatch();
       }
-    },
-    async axiosPatch() {
-      await axios.patch(`http://localhost:3000/todolists/${this.todolist.id}`, {
-        title: this.todolist.title,
-        description: this.todolist.description,
-        time: this.todolist.time,
-        id: this.todolist.id
-      }).
-      then(response => {
-        console.debug(response);
-        }).
-      catch(error => {
-        console.debug(error)
-        })
-      console.debug('b');
-    },
-    goCalendarPage() {
-      this.$router.push({ name: "Calendar"})
     }
-  },
-  
-})
+  }
+});
 </script>
 
 <style scoped>
