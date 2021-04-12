@@ -36,11 +36,11 @@
             <i class="fas fa-plus"></i>
           </button>
         </li>
-        <!-- <li>
+        <li>
           <button class="button--delete">
-            <i class="fas fa-minus"></i>
+            <i class="fas fa-minus" ></i>
           </button>
-        </li> -->
+        </li>
       </ul>
     </header>
     <!-- 일정 목록 -->
@@ -72,7 +72,10 @@ import moment from "moment";
 export default defineComponent({
   props: {
     date: Object,
-    getDay: String
+    getDay: {
+      type: String,
+      required: true
+    }
   },
   data() {
     return {
@@ -85,19 +88,30 @@ export default defineComponent({
       return this.getDay;
     }
   },
+  created(): void {
+    console.log('Todolist Component');
+    console.log(this.getDay);
+    this.axiosGet();
+  },
+  beforeUpdate () {
+    console.log('Todolsit Component - beforeUpdate');
+    console.log(this.date);
+    console.log(this.getDay);
+    console.log('a');
+  },
   methods: {
     goYesterday(): void {
       console.log("goYesterday");
       // eslint-disable-next-line
       const startOfMonth : string = moment(this.date).startOf('month').format('YYYY-MM-DD');
       // eslint-disable-next-line
-      (this.getDay == startOfMonth ) ? this.$emit("goYesterday", -1) : this.$emit("goYesterday", 0);
+      (this.todolistDate == startOfMonth ) ? this.$emit("goYesterday", -1) : this.$emit("goYesterday", 0);
     },
     goTomorrow(): void {
       // eslint-disable-next-line
       const endOfMonth : string = moment(this.date).endOf("month").format("YYYY-MM-DD");
       // eslint-disable-next-line
-      (this.getDay == endOfMonth ) ? this.$emit("goTomorrow", 1) : this.$emit("goTomorrow", 0);
+      (this.todolistDate == endOfMonth ) ? this.$emit("goTomorrow", 1) : this.$emit("goTomorrow", 0);
     },
     goCreateTodoPage(): void {
       this.$router.push({ name: "CreateTodo" , params: { todolistDate: this.todolistDate }});
@@ -128,13 +142,10 @@ export default defineComponent({
       this.todolist = dataArray
       console.debug(this.todolist);
     },
-  },
-  created(): void {
-    this.axiosGet();
   }
 });
 </script>
 
 <style scoped>
-@import "./todolist.css";
+  @import "./todolist.css";
 </style>

@@ -87,11 +87,13 @@ export default defineComponent({
           time: this.todolist.time
         })
         .then(function (response) {
+          console.debug('a')
           console.log(response.data);
         })
         .catch(function (error) {
           console.log(error);
         });
+        console.debug('b')
     }
   }
 });

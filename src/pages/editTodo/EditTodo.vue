@@ -3,10 +3,9 @@
     <div class="advice">
       <!-- 명언 랜덤으로 뿌리기 -->
       <p>
-        시간관리의 핵심은 이미 적힌 일과중에 무엇부터 할까를 정하는 것이
-        아니라,<br />
-        우선순위의 일부터 일정에 넣는 것이다.<br />-스티븐 커비, 성공하는
-        사람들의 7가지 습관 저자-
+        미래의 '8년'에 신경쓰지 말고,<br />
+        코앞의 '8일'에 집중하는 삶을 살라.<br />
+        -개리 베이너척-
       </p>
     </div>
     <ul class="todo-flex todo-info">
@@ -40,13 +39,13 @@
     </ul>
     <ul class="todo-flex buttons-wrapper">
       <li>
-        <button class="button--edit" @click="axiosPatch">
+        <button class="button--edit" @click="editTodo()">
           <i class="far fa-edit"></i>
         </button>
       </li>
       <li>
         <button class="button--cancle">
-          <i class="fas fa-minus"></i>
+          <i class="fas fa-undo"></i>
         </button>
       </li>
     </ul>
@@ -72,12 +71,21 @@ export default defineComponent({
         description: this.todolistData.description,
         time: this.todolistData.time,
         id: this.todolistData.id
-      }
+      },
+      forVerificationTodolist: this.todolistData
     }
   },
   methods: {
+    editTodo() {
+      if( (this.todolist.title === this.forVerificationTodolist.title) && (this.todolist.description === this.forVerificationTodolist.description) && (this.todolist.time  === this.forVerificationTodolist.time) ){
+        console.debug('그대로임');
+        this.goCalendarPage();
+      } else {
+        console.debug('바뀌었음.');
+        this.axiosPatch()
+      }
+    },
     async axiosPatch() {
-      console.debug('axiosPatch')
       await axios.patch(`http://localhost:3000/todolists/${this.todolist.id}`, {
         title: this.todolist.title,
         description: this.todolist.description,
@@ -85,18 +93,18 @@ export default defineComponent({
         id: this.todolist.id
       }).
       then(response => {
-        // console.debug(response, 'a-succes');
         console.debug(response);
-        console.debug('a-succes');
         }).
       catch(error => {
-        // console.debug(error, 'a-error')
         console.debug(error)
-        console.debug('a-error')
         })
       console.debug('b');
+    },
+    goCalendarPage() {
+      this.$router.push({ name: "Calendar"})
     }
-  }
+  },
+  
 })
 </script>
 
