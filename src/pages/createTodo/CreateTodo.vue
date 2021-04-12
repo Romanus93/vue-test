@@ -39,11 +39,11 @@
           <i class="fas fa-plus"></i>
         </button>
       </li>
-      <!-- <li>
-        <button class="button--cancle">
-          <i class="fas fa-minus"></i>
+      <li>
+        <button class="button--home" @click="goCalendarPage">
+          <i class="fas fa-home"></i>
         </button>
-      </li> -->
+      </li>
     </ul>
   </main>
 </template>
@@ -51,6 +51,13 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import axios from "axios";
+
+interface Todolist {
+  date: string;
+  title: string;
+  description: string;
+  time: number;
+}
 
 export default defineComponent({
   props: {
@@ -66,19 +73,11 @@ export default defineComponent({
         title: " ",
         description: " ",
         time: 0
-      },
+      } as Todolist
     };
   },
   methods: {
-    createTodo() {
-      if( (this.todolist.time > 0) && (this.todolist.title != "") && (this.todolist.description != "") ) {
-        this.axiosPost();
-        this.$router.push({ name: "Calendar" });
-      } else {
-        alert("값을 확인해주세요!")
-      }
-    },
-    async axiosPost() {
+    async axiosPost(): Promise<void> {
       await axios
         .post("http://localhost:3000/todolists", {
           date: this.todolist.date,
@@ -86,12 +85,27 @@ export default defineComponent({
           description: this.todolist.description,
           time: this.todolist.time
         })
-        .then((response) => {
+        .then(response => {
           console.debug(response.data);
         })
-        .catch((error) => {
-          console.debug(error)
+        .catch(error => {
+          console.debug(error);
         });
+    },
+    goCalendarPage(): void {
+      this.$router.push({ name: "Calendar" });
+    },
+    createTodo(): void {
+      if (
+        (this.todolist.time > 0) &&
+        (this.todolist.title != "") &&
+        (this.todolist.description != "")
+      ) {
+        this.axiosPost();
+        this.$router.push({ name: "Calendar" });
+      } else {
+        alert("값을 확인해주세요!");
+      }
     }
   }
 });

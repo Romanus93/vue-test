@@ -8,14 +8,15 @@
       is-expanded
       ref="calendar"
     />
+    <!-- 날짜 안내 모달 -->
     <div class="calendarModal" v-if="!getDay">
       <p>날짜를 선택해주세요!</p>
-      <button>확인</button>
     </div>
     <!-- <div style="border: 1px solid blue; height: 300px" v-if="!getDay">
       
     </div> -->
     <Todolist
+      v-else
       :date="date"
       :getDay="getDay"
       @goYesterday="goYesterday"
@@ -33,7 +34,7 @@ export default defineComponent({
   components: { Todolist },
   data() {
     return {
-      date: new Date(),
+      date: new Date() as object,
       position: 1,
       transition: "slide-h",
       calendarView: false
@@ -47,22 +48,13 @@ export default defineComponent({
         return today;
       } else {
         console.log('Calednar-Page Computed-Getday',this.date);
-        this.testFunc();
-        return null;
+        return this.date;
       }
     },
     calendar(): any {
-      const calendars = this.$refs.calendar;
+      const calendars = this.$refs.calendar as object;
       return calendars;
     }
-  },
-  created () {
-    console.log('Calendar-Page created');
-    console.log(this.getDay);
-  },
-  beforeUpdate () {
-    console.log('Calendar-Page before update');
-    console.log('Calendar-Page before update', this.getDay);
   },
   methods: {
     goYesterday(step: number): void {
@@ -81,14 +73,7 @@ export default defineComponent({
         transition: this.transition,
         position: this.position
       });
-    },
-    testFunc() {
-      console.log('Calendar-Page test Func', this.getDay);
     }
   }
 });
 </script>
-
-<style scoped>
-
-</style>
