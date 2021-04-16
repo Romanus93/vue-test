@@ -82,6 +82,7 @@ export default defineComponent({
   },
   methods: {
     async axiosPost(): Promise<void> {
+      console.debug('2222');
       await axios
         .post("http://localhost:3000/todolists", {
           date: this.todolist.date,
@@ -95,28 +96,34 @@ export default defineComponent({
         .catch(error => {
           console.debug(error);
         });
+      console.debug('3333')
     },
-    createTodo(): void {
+    async createTodo(): Promise<void> {
       console.log("createTodo");
       if (
         (this.todolist.time > 0) &&
         (this.todolist.title != "") &&
         (this.todolist.description != "")
       ) {
-        this.axiosPost();
+        console.debug('1111');
+        await this.axiosPost();
+        console.debug('4444');
         this.goCalendarPage(); // go to the Calender-Page
       } else {
         alert("값을 확인해주세요!");
       }
     },
     goCalendarPage(): void {
+      console.debug('5555')
       this.compareDates();
     },
     compareDates(): void {
       const today: string = moment(new Date()).format("YYYY-MM-DD");
       if(today == this.todolist.date) {
+        console.debug('6666')
         this.$router.push({name: "Calendar" });
       } else {
+        console.debug('6666')
         this.$router.push({name: "Calendar", params: { todolistDate: this.todolist.date }})
       }
     }

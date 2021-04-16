@@ -52,20 +52,25 @@
             <!-- eslint-disable-next-line -->
             <div><button type="button" class="button--start"><i class="fas fa-running"></i></button></div>
             <!-- eslint-disable-next-line -->
-            <div><button type="button" class="button--edit-delete" @click="goEditTodoPage(item)"><i class="fas fa-ellipsis-h"></i></button></div>
+            <div><button type="button" class="button--edit-delete" @click="openModal(true)"><i class="fas fa-ellipsis-h"></i></button></div>
             <!-- eslint-disable-next-line -->
-            <button type="button" class="button--delete" @click="deleteTodolist(item)">삭제 버튼</button>
-            <!-- eslint-disable-next-line -->
-            <div v-show="test2" style="width: 100%; height: 100%; opacity: 1; position: absolute; top: 0; background-color: orange; left: 0; z-index:100;">
-              <button @click="test2Func(false)">임시버튼</button>
+            <div class="todo-flex modal" v-show="modalBoolean" >
+              <ul>
+                <li style="color: red;">
+                  <button type="button" class="button--delete" style="width: 10vw" @click="deleteTodolist(item)">삭제하기</button>
+                </li>
+                <li>
+                  <button type="button" class="button--edit" @click="goEditTodoPage(item)">수정하기</button>
+                </li>
+                <li>
+                  <button type="button" class="button--cancle" @click="openModal(false)">취소</button>
+                </li>
+              </ul>
             </div>
           </li>
         </ul>
         <div v-show="testIf">
           {{ text }}
-        </div>
-        <div>
-          <button type="button" @click="test2Func(true)">확인버튼</button>
         </div>
       </section>
     </main>
@@ -113,7 +118,7 @@ export default defineComponent({
       text: "",
       testIf: false,
       test: false,
-      test2: false
+      modalBoolean: false
     }
   },
   computed: {
@@ -139,13 +144,11 @@ export default defineComponent({
   created(): void {
     this.axiosGet();
     console.log(this.todolist);
-    console.log(this.test2);
-    
   },
   methods: {
-    test2Func (booleanParams: boolean) :void {
+    openModal (booleanParams: boolean) :void {
       console.log(booleanParams);
-      this.test2 = booleanParams;
+      this.modalBoolean = booleanParams;
     },
     async axiosGet(): Promise<void> {
       this.todolist.length = 0;
@@ -210,6 +213,7 @@ export default defineComponent({
       await this.axiosDelete(item);
       console.debug('axios-delte -- d');
       await this.axiosGet();
+      this.modalBoolean = false;
     },
     inputText(): void {
       if (this.todolist.length == 0) {
