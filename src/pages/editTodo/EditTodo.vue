@@ -54,6 +54,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import moment from "moment";
 import axios from "axios";
 
 interface Todolist {
@@ -78,7 +79,8 @@ export default defineComponent({
         title: this.todolistData.title,
         description: this.todolistData.description,
         time: this.todolistData.time,
-        id: this.todolistData.id
+        id: this.todolistData.id,
+        date: this.todolistData.date
       },
       forVerificationTodolist: this.todolistData
     }
@@ -100,10 +102,8 @@ export default defineComponent({
         });
       console.debug("b");
     },
-    goCalendarPage(): void {
-      this.$router.push({ name: "Calendar" });
-    },
     editTodo() {
+      console.log("editTodo");
       if (
         (this.todolist.title === this.forVerificationTodolist.title) &&
         (this.todolist.description === this.forVerificationTodolist.description) &&
@@ -112,6 +112,19 @@ export default defineComponent({
         this.goCalendarPage();
       } else {
         this.axiosPatch();
+        this.goCalendarPage();
+      }
+    },
+    goCalendarPage(): void {
+      console.log("goCalendarPage");
+      this.compareDates();
+    },
+    compareDates(): void {
+      const today: string = moment(new Date()).format("YYYY-MM-DD");
+      if(today == this.todolist.date) {
+        this.$router.push({name: "Calendar" });
+      } else {
+        this.$router.push({name: "Calendar", params: { todolistDate: this.todolist.date }})
       }
     }
   }

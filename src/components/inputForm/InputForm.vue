@@ -1,9 +1,9 @@
 <template>
   <main class="todo-flex input-form">
-    <div class="advice">
-      <!-- 명언 랜덤으로 뿌리기 -->
+    <!-- <div class="advice">
+      명언 랜덤으로 뿌리기
       <p>어디를 가든 마음을 다해 가라.<br />-공자-</p>
-    </div>
+    </div> -->
     <ul class="todo-flex todo-info">
       <li class="todo-flex todo-title">
         <label for="title">오늘 할 일</label>
@@ -51,7 +51,6 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import axios from "axios";
-import moment from "moment";
 
 interface Todolist {
   date: string;
@@ -77,9 +76,6 @@ export default defineComponent({
       } as Todolist
     };
   },
-  created () {
-    console.log(this.todolist.date);
-  },
   methods: {
     async axiosPost(): Promise<void> {
       await axios
@@ -96,28 +92,19 @@ export default defineComponent({
           console.debug(error);
         });
     },
+    goCalendarPage(): void {
+      this.$router.push({ name: "Calendar" });
+    },
     createTodo(): void {
-      console.log("createTodo");
       if (
         (this.todolist.time > 0) &&
         (this.todolist.title != "") &&
         (this.todolist.description != "")
       ) {
         this.axiosPost();
-        this.goCalendarPage(); // go to the Calender-Page
+        this.$router.push({ name: "Calendar" });
       } else {
         alert("값을 확인해주세요!");
-      }
-    },
-    goCalendarPage(): void {
-      this.compareDates();
-    },
-    compareDates(): void {
-      const today: string = moment(new Date()).format("YYYY-MM-DD");
-      if(today == this.todolist.date) {
-        this.$router.push({name: "Calendar" });
-      } else {
-        this.$router.push({name: "Calendar", params: { todolistDate: this.todolist.date }})
       }
     }
   }
@@ -125,5 +112,5 @@ export default defineComponent({
 </script>
 
 <style scoped>
-@import "./create-todo.css";
+@import "./TodoForm.css";
 </style>

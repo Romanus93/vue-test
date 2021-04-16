@@ -40,22 +40,32 @@
     </header>
     <!-- 일정 목록 -->
     <main>
-      <section>
+      <h1 v-show="test">hellow world</h1>
+      <section class="todo-flex teporaryClass">
         <!-- v-for 반복문 -->
-        <ul>
+        <ul class="todo-lists">
           <li class="todo_item" v-for="(item, index) in todolist" :key="index">
             <div>Title : {{ item.title }}</div>
             <div>description : {{ item.description }}</div>
             <div>time : {{ item.time }}</div>
-            <div>id: {{ item.id }}</div>
+            <!-- <div>id: {{ item.id }}</div> -->
             <!-- eslint-disable-next-line -->
-            <div><button class="button--start"><i class="fas fa-running"></i></button></div>
+            <div><button type="button" class="button--start"><i class="fas fa-running"></i></button></div>
             <!-- eslint-disable-next-line -->
-            <div><button class="button--edit" @click="goEditTodoPage(item)"><i class="fas fa-ellipsis-v"></i></button></div>
+            <div><button type="button" class="button--edit-delete" @click="goEditTodoPage(item)"><i class="fas fa-ellipsis-h"></i></button></div>
+            <!-- eslint-disable-next-line -->
+            <button type="button" class="button--delete" @click="deleteTodolist(item)">삭제 버튼</button>
+            <!-- eslint-disable-next-line -->
+            <div v-show="test2" style="width: 100%; height: 100%; opacity: 1; position: absolute; top: 0; background-color: orange; left: 0; z-index:100;">
+              <button @click="test2Func(false)">임시버튼</button>
+            </div>
           </li>
         </ul>
-        <div v-if="testIf">
+        <div v-show="testIf">
           {{ text }}
+        </div>
+        <div>
+          <button type="button" @click="test2Func(true)">확인버튼</button>
         </div>
       </section>
     </main>
@@ -68,11 +78,21 @@ import axios from "axios";
 import moment from "moment";
 
 interface Todolist {
-  date: string;
   title: string;
   description: string;
   time: number;
   id: number;
+  date: string;
+}
+
+declare module "axios" {
+  interface AxiosRequestConfig {
+    title: string;
+    description: string;
+    time: number;
+    id: number;
+    date?: string;
+  }
 }
 
 export default defineComponent({
@@ -91,7 +111,9 @@ export default defineComponent({
     return {
       todolist: [] as object[],
       text: "",
-      testIf: false
+      testIf: false,
+      test: false,
+      test2: false
     }
   },
   computed: {
@@ -113,10 +135,18 @@ export default defineComponent({
       }
     }
   },
+  // this.todolist가 먼저 나오는데 async를 써주는 것이 맞는지.
   created(): void {
     this.axiosGet();
+    console.log(this.todolist);
+    console.log(this.test2);
+    
   },
   methods: {
+    test2Func (booleanParams: boolean) :void {
+      console.log(booleanParams);
+      this.test2 = booleanParams;
+    },
     async axiosGet(): Promise<void> {
       this.todolist.length = 0;
       await axios
@@ -135,6 +165,23 @@ export default defineComponent({
         });
       this.inputText();
       console.debug('b');
+    },
+    async axiosDelete(item: Todolist): Promise<void> {
+      console.debug('axios-delete -- b');
+      await axios
+        .delete(`http://localhost:3000/todolists/${item.id}`, {
+          id: item.id,
+          title: item.title,
+          description: item.description,
+          time: item.time
+        })
+        .then(response => {
+          console.debug(response);
+        })
+        .catch(error => {
+          console.debug(error);
+        });
+      console.debug('axios-delete -- c');
     },
     goYesterday(): void {
       console.log("goYesterday");
@@ -157,6 +204,12 @@ export default defineComponent({
     },
     goCalendarPage(): void {
       this.$router.push({ name: "Calendar" });
+    },
+    async deleteTodolist(item: Todolist): Promise<void> {
+      console.debug('axios-delete -- a');
+      await this.axiosDelete(item);
+      console.debug('axios-delte -- d');
+      await this.axiosGet();
     },
     inputText(): void {
       if (this.todolist.length == 0) {

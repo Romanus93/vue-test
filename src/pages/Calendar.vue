@@ -42,7 +42,7 @@ export default defineComponent({
     };
   },
   computed: {
-    getDay(): string | undefined | null {
+    getDay(): string | null {
       if (this.date != null) {
         const today = moment(this.date).format("YYYY-MM-DD");
         return today;
@@ -55,6 +55,10 @@ export default defineComponent({
       const calendars = this.$refs.calendar as object;
       return calendars;
     }
+  },
+  created() {
+    console.log('calendar page - created');
+    this.selectDate();
   },
   methods: {
     goYesterday(step: number): void {
@@ -73,6 +77,16 @@ export default defineComponent({
         transition: this.transition,
         position: this.position
       });
+    },
+    selectDate(){
+      if(this.$route.params.todolistDate == undefined) {
+        return;
+      } else {
+        const todolistDate: any = moment(this.$route.params.todolistDate);
+        console.log(todolistDate._d);
+        this.date = todolistDate._d;
+        return;
+      }
     }
   }
 });
